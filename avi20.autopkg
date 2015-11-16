@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 1.0.0.0;
+      version: 1.0.0.1;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
@@ -39,7 +39,7 @@ nuget
          AVI20_LIB = builds\;
       }
 
-      avi20Include:    { #destination = ${d_include}AVI20; ..\include\AVI20\*.h };
+      avi20Include:    { #destination = ${d_include}AVI20; include\AVI20\*.h };
 
       ("Win32,x64", "v140", "Debug,Release") =>
       {
