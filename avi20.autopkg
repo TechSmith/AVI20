@@ -1,3 +1,10 @@
+configurations {
+	Toolset {
+		key : "PlatformToolset";
+		choices: { v140 };
+	};
+}
+
 nuget
 {
    nuspec
