@@ -1,0 +1,64 @@
+nuget
+{
+   nuspec
+   {
+      id = avi20;
+      version: 1.0.0.0;
+      title: AVI20 Library;
+      authors: { TechSmith Corporation };
+      owners: { TechSmith Corporation };
+      licenseUrl: "http://www.techsmith.com";
+      projectUrl: "https://github.com/TechSmith/AVI20";
+      iconUrl: "http://www.techsmith.com/favicon.ico";
+      requireLicenseAcceptance: false;
+      summary: AVI20 Library;
+      releaseNotes: "none";
+      description: @"Library for reading and writing AVI 2.0 files (which supports files larger than 4GB) ";
+      copyright: "Copyright (c) 2015 TechSmith Corporation. All rights reserved.";
+      tags: { native, tsc, vs2015, cpp, nomfc, techsmith, cross-platform };
+   };
+   
+   dependencies
+   {
+      packages:
+      {
+      };
+   };
+
+   files
+   {
+      #defines
+      {
+         AVI20_LIB = builds\;
+      }
+
+      avi20Include:    { #destination = ${d_include}AVI20; ..\include\AVI20\*.h };
+
+      ("Win32,x64", "v140", "Debug,Release") =>
+      {
+         [${0},${1},${2}]
+         {
+            lib:         { ${AVI20_LIB}${0}\${2}\AVI20.lib; }
+         };
+      };
+   };
+
+   props
+   {
+      // Additional declarations to insert into consuming projects before most of the
+      // project settings. (These may be modified in visual studio by a developer
+      // consuming this package.)
+      // This node is typically not needed for most packages and may be omitted.
+   }
+
+   targets
+   {
+      // Additional declarations to insert into consuming projects after most of the
+      // project settings. (These may NOT be modified in visual studio by a developer
+      // consuming this package.)
+      // This node is often used to set defines that are required that must be set by
+      // the consuming project in order to correctly link to the libraries in this
+      // package.  Such defines may be set either globally or only set under specific
+      // conditions.
+   }
+}
