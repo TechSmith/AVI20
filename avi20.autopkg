@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 1.0.0.2;
+      version: 1.0.0.3;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
