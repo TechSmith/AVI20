@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avi20", "avi20.vcxproj", "{6E6F3652-DD6E-48DF-80EF-214986694C77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E661EAC3-CA2A-4BFE-8580-549FFF3A2CFC}"
+	ProjectSection(SolutionItems) = preProject
+		avi20.autopkg = avi20.autopkg
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
