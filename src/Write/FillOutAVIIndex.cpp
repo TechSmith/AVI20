@@ -138,7 +138,7 @@ void FillOutAVIIndex( Write::Stream& stream, const Read::FillAVIIndexInfo& info 
          stdIndex.wLongsPerEntry    = 2;
          stdIndex.bIndexSubType     = 0;
          stdIndex.bIndexType        = 1;        /*AVI_INDEX_OF_CHUNKS*/
-         stdIndex.nEntriesInUse     = index.entries.size();     // offset of next unused entry in aIndex
+         stdIndex.nEntriesInUse     = (DWORD) index.entries.size();     // offset of next unused entry in aIndex
          stdIndex.dwChunkId         = streamInfo.frameFCC( true/*keyframe*/ );
          stdIndex.qwBaseOffset      = index.basePos;
          stdIndex.dwReserved_3      = 0;

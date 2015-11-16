@@ -31,7 +31,7 @@ public: // mix-ins
 
 public:
    int             CurStreamIndex() const { return NumStreams()-1; }
-   int             NumStreams() const { return _StreamInfo.size(); }
+   int             NumStreams() const { return (int)_StreamInfo.size(); }
    MediaStreamInfo StreamInfo( int streamIndex ) const;
 
 protected:
