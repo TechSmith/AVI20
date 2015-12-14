@@ -11,7 +11,7 @@
 
 // Set up DLL Export/Import macro for windows
 #if !defined(AVI20_API)
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_USRDLL)
 #ifdef AVI20_EXPORTS
 #define AVI20_API __declspec(dllexport)
 #else
