@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 1.0.0.3;
+      version: 1.1.0.0;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
@@ -40,12 +40,14 @@ nuget
       }
 
       avi20Include:    { #destination = ${d_include}AVI20; include\AVI20\**\*.h };
+      libpdb:          { #destination = ${d_lib}; };
 
       ("Win32,x64", "v140", "Debug,Release") =>
       {
          [${0},${1},${2}]
          {
             lib:         { ${AVI20_LIB}${0}\${2}\AVI20.lib; }
+            libpdb:      { ${AVI20_LIB}${0}\${2}\AVI20.pdb; }
          };
       };
    };
