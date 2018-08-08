@@ -1,7 +1,7 @@
 configurations {
 	Toolset {
 		key : "PlatformToolset";
-		choices: { v140 };
+		choices: { v141 };
 	};
 }
 
@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 1.2.0.0;
+      version: 1.3.0.0;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
@@ -19,10 +19,10 @@ nuget
       iconUrl: "http://www.techsmith.com/favicon.ico";
       requireLicenseAcceptance: false;
       summary: AVI20 Library;
-      releaseNotes: "none";
+      releaseNotes: "Updated to Visual Studio 2017";
       description: @"Library for reading and writing AVI 2.0 files (which supports files larger than 4GB) ";
-      copyright: "Copyright (c) 2015 TechSmith Corporation. All rights reserved.";
-      tags: { native, tsc, vs2015, cpp, nomfc, techsmith, cross-platform };
+      copyright: "Copyright (c) 2015-2018 TechSmith Corporation. All rights reserved.";
+      tags: { native, tsc, vs2017, cpp, nomfc, techsmith, cross-platform };
    };
    
    dependencies
@@ -42,7 +42,7 @@ nuget
       avi20Include:    { #destination = ${d_include}AVI20; include\AVI20\**\*.h };
       libpdb:          { #destination = ${d_lib}; };
 
-      ("Win32,x64", "v140", "Debug,Release") =>
+      ("Win32,x64", "v141", "Debug,Release") =>
       {
          [${0},${1},${2}]
          {
