@@ -10,13 +10,13 @@ NAMESPACE_AVI20_END
 NAMESPACE_AVI20_READ_BEGIN
 
 struct MediaStreamInfo;
-class Stream;
+class IStream;
 class FrameIndex;
 
 class MediaStreamReaderImpl
 {
 public:
-   MediaStreamReaderImpl( Stream& stream, const MediaStreamInfo& indxChunk );
+   MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& indxChunk );
    virtual ~MediaStreamReaderImpl();
    void ParseIndex();
 
@@ -34,7 +34,7 @@ public:
    double          Duration() const;
 
 private:
-   Stream&         _Stream;
+   IStream&        _Stream;
    MediaStreamInfo _StreamInfo;
    FrameIndex*     _FrameIndex;
 };

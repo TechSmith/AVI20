@@ -6,6 +6,10 @@
 #include <vector>
 #include <algorithm>
 
+#ifdef min
+#undef min
+#endif
+
 NAMESPACE_AVI20_READ_BEGIN
 
 
@@ -26,9 +30,9 @@ private:
 struct Type2Index
 {
 public:
-   void Read( Stream& stream, uint64_t endPos )
+   void Read( IStream& stream, uint64_t endPos )
    {
-      superIndex = stream.Read<AVISUPERINDEX>();
+      stream.Read( superIndex );
 
       if ( superIndex.wLongsPerEntry != 4 )                         Stream::ThrowException();
       if ( superIndex.bIndexType     != 0/*AVI_INDEX_OF_INDEXES*/ ) Stream::ThrowException();
@@ -36,16 +40,22 @@ public:
       uint64_t sizeOfIndexes = (uint64_t)superIndex.nEntriesInUse*superIndex.wLongsPerEntry*4;
       if ( stream.Pos() + sizeOfIndexes > endPos )                  Stream::ThrowException();
 
-      for ( int i = 0; i < (int) superIndex.nEntriesInUse; i++ )
-         indexes.push_back( stream.Read<AVISUPERINDEXENTRY>() );
+      for ( int i = 0; i < (int)superIndex.nEntriesInUse; i++ )
+      {
+         AVISUPERINDEXENTRY entry;
+         stream.Read( entry );
+         indexes.push_back( entry );
+      }
 
       for ( int idx = 0; idx < (int) indexes.size(); idx++ )
       {
          stream.SetPos( indexes[idx].qwOffset + 8 );
-         AVISTDINDEX stdIndex = stream.Read<AVISTDINDEX>();
+         AVISTDINDEX stdIndex;
+         stream.Read( stdIndex );
          for ( int i = 0; i < (int) stdIndex.nEntriesInUse; i++ )
          {
-            AVISTDINDEX_ENTRY entry = stream.Read<AVISTDINDEX_ENTRY>();
+            AVISTDINDEX_ENTRY entry;
+            stream.Read( entry );
             frames.push_back( FrameInfo( entry, stdIndex.qwBaseOffset ) );
          }
       }
@@ -89,7 +99,7 @@ public:
 
 
 
-FrameIndex::FrameIndex( Stream& stream, const ChunkHeader& indxChunk )
+FrameIndex::FrameIndex( IStream& stream, const ChunkHeader& indxChunk )
    : _Stream( stream )
    , _IndxChunk( indxChunk )
 {

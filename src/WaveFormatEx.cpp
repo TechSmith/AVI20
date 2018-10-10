@@ -32,15 +32,15 @@ WaveFormatEx WaveFormatEx::PCM( int sampleRate, int bitDepth, int numChannels )
    return ret;
 }
 
-void WaveFormatEx::InitFromStream( Read::Stream& stream )
+void WaveFormatEx::InitFromStream( Read::IStream& stream )
 {
-   _Format = stream.Read<AVI20::WAVEFORMATEX>();
+   stream.Read( _Format );
    _ExtraData.resize( _Format.cbSize );
    if ( !_ExtraData.empty() )
       stream.Read( &_ExtraData[0], _Format.cbSize );
 }
 
-WaveFormatEx WaveFormatEx::FromStream( Read::Stream& stream )
+WaveFormatEx WaveFormatEx::FromStream( Read::IStream& stream )
 {
    WaveFormatEx ret;
    ret.InitFromStream( stream );

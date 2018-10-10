@@ -7,6 +7,10 @@
 #include <cassert>
 #include <fstream>
 
+#ifdef max
+#undef max
+#endif
+
 NAMESPACE_AVI20_READ_BEGIN
 
 FOURCC AVIStreamInfo::frameFCC( bool isKeyframe ) const
@@ -42,9 +46,9 @@ public:
 
       // per stream
       if ( fcc == FCC('strl') ) { int idx = (int)_Info._StreamInfos.size(); _Info._StreamInfos.push_back( AVIStreamInfo( idx ) ); }
-      if ( fcc == FCC('strh') ) { _Info._StreamInfos.back().streamInfo.header = _Stream->Read<MediaStreamHeader>(); _Info._StreamInfos.back().STRHch = ch; }
+      if ( fcc == FCC( 'strh' ) ) { _Stream->Read( _Info._StreamInfos.back().streamInfo.header ); _Info._StreamInfos.back().STRHch = ch; }
       if ( fcc == FCC('indx') ) _Info._StreamInfos.back().streamInfo.indxChunk = ch;
-      if ( fcc == FCC('strf') && _Info._StreamInfos.back().streamInfo.IsVideo() ) _Info._StreamInfos.back().streamInfo.video = _Stream->Read<BITMAPINFOHEADER>();
+      if ( fcc == FCC( 'strf' ) && _Info._StreamInfos.back().streamInfo.IsVideo() ) _Stream->Read( _Info._StreamInfos.back().streamInfo.video );
       if ( fcc == FCC('strf') && _Info._StreamInfos.back().streamInfo.IsAudio() ) _Info._StreamInfos.back().streamInfo.audio = WaveFormatEx::FromStream( *_Stream );
 
       // standard index (type 2)
@@ -69,7 +73,8 @@ public:
          return false; // EOF
 
       _Stream->SetPos( _Stream->Pos() + alignBits );
-      FOURCC nextFCC = _Stream->Read<FOURCC>();
+      FOURCC nextFCC;
+      _Stream->Read( nextFCC );
       _Stream->SetPos( _Stream->Pos() - 4 - alignBits );
 
       if ( inAVIChunk )
@@ -137,7 +142,7 @@ DWORD FillAVIIndexInfo::CalcStreamLength( int streamIdx, bool firstRIFFOnly ) co
    return ret;
 }
 
-void FillAVIIndexInfo::InitFrom( Stream& stream )
+void FillAVIIndexInfo::InitFrom( IStream& stream )
 {
    CaptureAVIParser parser( *this );
    parser.Parse( stream );

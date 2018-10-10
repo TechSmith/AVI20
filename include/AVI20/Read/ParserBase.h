@@ -8,15 +8,15 @@
 NAMESPACE_AVI20_READ_BEGIN
 
 struct ChunkHeader;
-class Stream;
+class IStream;
 
 class ParserBase
 {
 public:
    ParserBase();
-   ParserBase( Stream& stream );
+   ParserBase( IStream& stream );
    void Parse();
-   void Parse( Stream& stream );
+   void Parse( IStream& stream );
    void ParseChunk( int depth );
 
 private:
@@ -38,7 +38,7 @@ protected:
    virtual std::string DebugStr( int depth, const ChunkHeader& ch, bool skip );
 
 protected:
-   Stream* _Stream;
+   IStream* _Stream;
 
 protected:
    MainHeader                   _MainHeader;

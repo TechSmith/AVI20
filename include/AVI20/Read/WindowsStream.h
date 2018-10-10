@@ -3,19 +3,14 @@
 #include <AVI20/AVI20Types.h>
 #include <AVI20/Read/IStream.h>
 
-#include <istream>
-
-NAMESPACE_AVI20_WRITE_BEGIN
-class Stream;
-NAMESPACE_AVI20_WRITE_END
+struct IStream;
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class AVI20_API Stream : public IStream
+class WindowsStream : public IStream
 {
 public:
-   Stream( std::istream* file = NULL ) : _File( file ), /*_Stream(nullptr),*/ _CachedSize( -1 )/*, _CachedPos( 0ULL)*/ {}
-   Stream( Write::Stream& stream );
+   WindowsStream( ::IStream *stream ) :_Stream( stream ), _CachedSize( -1 ), _CachedPos( 0ULL ) {}
 
    bool IsNULL() const override;
 
@@ -38,16 +33,16 @@ public:
    void Rewind() override;
 
 private:
-
    template <typename T>
    T read()
    {
       T t;
-      _File->read( (char *)&t, sizeof( T ) );
+      Read( (uint8_t *)&t, sizeof( T ) );
       return t;
    }
-   std::istream* _File; // doesn't own
-   int64_t       _CachedSize;
-};
 
+   ::IStream*    _Stream;  // doesn't own
+   int64_t       _CachedSize;
+   uint64_t      _CachedPos;
+};
 NAMESPACE_AVI20_READ_END
