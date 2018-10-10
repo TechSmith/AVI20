@@ -8,6 +8,8 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
+class IStream;
+
 struct Index
 {
    Index() {}
@@ -62,7 +64,7 @@ struct FillAVIIndexInfo
    std::vector<ChunkHeader>   _AVIchs;
    std::vector<ChunkHeader>   _MOVIchs;
 
-   void InitFrom( Stream& stream );
+   void InitFrom( IStream& stream );
    void InitFrom( const std::string& filename );
 };
 

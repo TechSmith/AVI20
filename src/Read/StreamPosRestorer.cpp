@@ -3,7 +3,7 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-StreamPosRestorer::StreamPosRestorer( Stream& s )
+StreamPosRestorer::StreamPosRestorer( IStream& s )
    : _Stream( s )
 {
    _Pos = _Stream.Pos();

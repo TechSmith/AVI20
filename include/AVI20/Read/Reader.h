@@ -7,13 +7,13 @@ NAMESPACE_AVI20_READ_BEGIN
 struct MediaStreamInfo;
 class ReaderImpl;
 class MediaStreamReader;
-class Stream;
+class IStream;
 
 class Reader
 {
 public:
    Reader();
-   Reader( Stream& stream );
+   Reader( IStream& stream );
    virtual ~Reader();
 
    int               NumStreams() const;

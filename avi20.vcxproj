@@ -157,6 +157,7 @@
     <ClInclude Include="include\AVI20\Read\ChunkHeader.h" />
     <ClInclude Include="include\AVI20\Read\FillAVIIndexInfo.h" />
     <ClInclude Include="include\AVI20\Read\FrameIndex.h" />
+    <ClInclude Include="include\AVI20\Read\IStream.h" />
     <ClInclude Include="include\AVI20\Read\MediaStreamInfo.h" />
     <ClInclude Include="include\AVI20\Read\MediaStreamReader.h" />
     <ClInclude Include="include\AVI20\Read\MediaStreamReaderImpl.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="include\AVI20\Read\Reader.h" />
     <ClInclude Include="include\AVI20\Read\Stream.h" />
     <ClInclude Include="include\AVI20\Read\StreamPosRestorer.h" />
+    <ClInclude Include="include\AVI20\Read\WindowsStream.h" />
     <ClInclude Include="include\AVI20\Tools\Tools.h" />
     <ClInclude Include="include\AVI20\Utl.h" />
     <ClInclude Include="include\AVI20\WaveFormatEx.h" />
@@ -188,6 +190,7 @@
     <ClCompile Include="src\Read\Reader.cpp" />
     <ClCompile Include="src\Read\Stream.cpp" />
     <ClCompile Include="src\Read\StreamPosRestorer.cpp" />
+    <ClCompile Include="src\Read\WindowsStream.cpp" />
     <ClCompile Include="src\Tools\Tools.cpp" />
     <ClCompile Include="src\Utl.cpp" />
     <ClCompile Include="src\WaveFormatEx.cpp" />

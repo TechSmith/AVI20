@@ -7,7 +7,7 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class Stream;
+class IStream;
 
 struct ChunkHeader
 {
@@ -25,7 +25,7 @@ struct ChunkHeader
    bool IsValid() const { return fcc != 0; }
 
    static bool IsList( uint32_t fcc ) { return fcc == FCC('RIFF') || fcc == FCC('LIST'); }
-   static ChunkHeader Read( Stream& stream );
+   static ChunkHeader Read( IStream& stream );
    static ChunkHeader Invalid();
 };
 

@@ -4,14 +4,14 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class Stream;
+class IStream;
 
 struct StreamPosRestorer
 {
-   StreamPosRestorer( Stream& s );
+   StreamPosRestorer( IStream& s );
    ~StreamPosRestorer();
-   Stream&  _Stream;
-   uint64_t _Pos;
+   IStream&  _Stream;
+   uint64_t  _Pos;
 };
 
 NAMESPACE_AVI20_READ_END

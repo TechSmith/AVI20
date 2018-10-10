@@ -6,7 +6,7 @@
 #include <sstream>
 #include <AVI20/AVI20Types.h>
 #include <AVI20/Read/ParserBase.h>
-#include <AVI20/Read/Stream.h>
+#include <AVI20/Read/IStream.h>
 #include <AVI20/Read/ChunkHeader.h>
 #include <AVI20/Read/StreamPosRestorer.h>
 #include <AVI20/Utl.h>
@@ -20,7 +20,7 @@ ParserBase::ParserBase()
 {
 }
 
-ParserBase::ParserBase( Stream& stream )
+ParserBase::ParserBase( IStream& stream )
    : _Stream( &stream )
 {
 }
@@ -31,7 +31,7 @@ void ParserBase::Parse()
    ParseChunk( 0 );
 }
 
-void ParserBase::Parse( Stream& stream )
+void ParserBase::Parse( IStream& stream )
 {
    _Stream = &stream;
    _Stream->SetPos( 0 );
@@ -98,9 +98,9 @@ void ParserBase::GotChunk( const ChunkHeader& ch )
 {
    if ( ch.fcc == FCC('avih') )
    {
-      _MainHeader = _Stream->Read<MainHeader>();
+      _Stream->Read( _MainHeader );
       if ( _MainHeader.dwStreams > 50 )
-         Stream::ThrowException();
+         IStream::ThrowException();
    }
 
    if ( ch.fcc == FCC('strl') )
@@ -110,13 +110,13 @@ void ParserBase::GotChunk( const ChunkHeader& ch )
 
    if ( ch.fcc == FCC('strh') && ch.size == sizeof(MediaStreamHeader) && !_StreamInfo.empty() )
    {
-      _StreamInfo.back().header = _Stream->Read<MediaStreamHeader>();
+      _Stream->Read( _StreamInfo.back().header );
    }
 
    if ( ch.fcc == FCC('strf') && !_StreamInfo.empty() )
    {
       if ( _StreamInfo.back().header.fccType == streamtypeVIDEO && ch.size == sizeof(BITMAPINFOHEADER) )
-         _StreamInfo.back().video = _Stream->Read<BITMAPINFOHEADER>();
+         _Stream->Read( _StreamInfo.back().video );
       if ( _StreamInfo.back().header.fccType == streamtypeAUDIO && ch.size >= sizeof(WAVEFORMATEX) )
          _StreamInfo.back().audio = WaveFormatEx::FromStream( *_Stream );
    }

@@ -10,13 +10,13 @@ NAMESPACE_AVI20_END
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class Stream;
+class IStream;
 struct Type2Index;
 
 class FrameIndex
 {
 public:
-   FrameIndex( Stream& stream, const ChunkHeader& indxChunk );
+   FrameIndex( IStream& stream, const ChunkHeader& indxChunk );
    virtual ~FrameIndex();
 
    uint32_t       NumFrames() const;
@@ -41,7 +41,7 @@ private:
    void Parse();
 
 private:
-   Stream&     _Stream;
+   IStream&    _Stream;
    ChunkHeader _IndxChunk;
    Type2Index* _Type2Index;
 };
