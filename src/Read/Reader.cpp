@@ -19,7 +19,7 @@ NAMESPACE_AVI20_READ_BEGIN
 class BasicInfoParser : public ParserBase
 {
 public:
-   BasicInfoParser( Stream& stream ) : ParserBase( stream ) {}
+   BasicInfoParser( IStream& stream ) : ParserBase( stream ) {}
 
    bool SkipChunk( const ChunkHeader& ch ) { return ch.fcc == FCC('movi'); }
 };
@@ -27,7 +27,7 @@ public:
 class ReaderImpl
 {
 public:
-   ReaderImpl( Stream& stream )
+   ReaderImpl( IStream& stream )
       : _Stream( stream )
       , _Parser( stream )
    {
@@ -106,7 +106,7 @@ public:
    }
 
 private:
-   Stream&                             _Stream;
+   IStream&                             _Stream;
    std::vector<MediaStreamReaderImpl*> _StreamReader;
    BasicInfoParser                     _Parser;
 };
@@ -122,7 +122,7 @@ Reader::~Reader()
    delete _Impl;
 }
 
-Reader::Reader( Stream& stream )
+Reader::Reader( IStream& stream )
 {
    _Impl = new ReaderImpl( stream );
 }

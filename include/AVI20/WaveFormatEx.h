@@ -6,7 +6,7 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class Stream;
+class IStream;
 
 NAMESPACE_AVI20_READ_END
 
@@ -31,8 +31,8 @@ public:
    static WaveFormatEx PCM( int sampleRate, int bitDepth, int numChannels );
 
 public:
-   void InitFromStream( Read::Stream& stream );
-   static WaveFormatEx FromStream( Read::Stream& stream );
+   void InitFromStream( Read::IStream& stream );
+   static WaveFormatEx FromStream( Read::IStream& stream );
    void WriteToStream( Write::Stream& stream ) const;
 
 public:

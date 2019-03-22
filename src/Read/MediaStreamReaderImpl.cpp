@@ -4,7 +4,7 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-MediaStreamReaderImpl::MediaStreamReaderImpl( Stream& stream, const MediaStreamInfo& streamInfo )
+MediaStreamReaderImpl::MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& streamInfo )
    : _Stream( stream )
    , _StreamInfo( streamInfo )
 {

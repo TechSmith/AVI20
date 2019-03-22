@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 1.3.0.0;
+      version: 1.4.0;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
@@ -20,7 +20,10 @@ nuget
       requireLicenseAcceptance: false;
       summary: AVI20 Library;
       releaseNotes: "Updated to Visual Studio 2017";
-      description: @"Library for reading and writing AVI 2.0 files (which supports files larger than 4GB) ";
+      description: @"Library for reading and writing AVI 2.0 files (which supports files larger than 4GB)";
+	  releaseNotes: "
+	     1.4.0.0   Allow for either std::istream or Windows-specific IStream implementations of file streams
+		 1.3.0.0   Updated to Visual Studio 2017";
       copyright: "Copyright (c) 2015-2018 TechSmith Corporation. All rights reserved.";
       tags: { native, tsc, vs2017, cpp, nomfc, techsmith, cross-platform };
    };
