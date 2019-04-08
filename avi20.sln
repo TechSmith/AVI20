@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		avi20.autopkg = avi20.autopkg
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CamrecDecoder", "CamrecDecoder.vcxproj", "{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -26,6 +28,14 @@ Global
 		{6E6F3652-DD6E-48DF-80EF-214986694C77}.Release|Win32.Build.0 = Release|Win32
 		{6E6F3652-DD6E-48DF-80EF-214986694C77}.Release|x64.ActiveCfg = Release|x64
 		{6E6F3652-DD6E-48DF-80EF-214986694C77}.Release|x64.Build.0 = Release|x64
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Debug|Win32.Build.0 = Debug|Win32
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Debug|x64.ActiveCfg = Debug|x64
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Debug|x64.Build.0 = Debug|x64
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Release|Win32.ActiveCfg = Release|Win32
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Release|Win32.Build.0 = Release|Win32
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Release|x64.ActiveCfg = Release|x64
+		{0556EB93-BD2D-4FA5-B0CE-651DF3D81A1E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
