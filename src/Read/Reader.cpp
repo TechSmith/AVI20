@@ -112,7 +112,7 @@ public:
          _StreamReader.resize( streamIndex+1 );
       if ( _StreamReader[streamIndex] )
          return;
-      _StreamReader[streamIndex] = new MediaStreamReaderImpl( _Stream, _Parser.StreamInfo( streamIndex ) );
+      _StreamReader[streamIndex] = new MediaStreamReaderImpl( _Stream, _Parser.StreamInfo( streamIndex ), _Parser.MoviPos() );
    }
 
    double Duration() const

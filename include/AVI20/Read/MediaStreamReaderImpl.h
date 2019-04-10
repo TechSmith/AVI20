@@ -16,7 +16,7 @@ class FrameIndex;
 class MediaStreamReaderImpl
 {
 public:
-   MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& indxChunk );
+   MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& indxChunk, uint64_t moviPos );
    virtual ~MediaStreamReaderImpl();
    void ParseIndex();
 
@@ -37,6 +37,7 @@ private:
    IStream&        _Stream;
    MediaStreamInfo _StreamInfo;
    FrameIndex*     _FrameIndex;
+   const uint64_t  _MoviPos;
 };
 
 NAMESPACE_AVI20_READ_END

@@ -34,7 +34,7 @@ public:
 class FrameIndex
 {
 public:
-   FrameIndex( IStream& stream, const ChunkHeader& indxChunk );
+   FrameIndex( IStream& stream, const ChunkHeader& indxChunk, uint64_t moviPos );
    virtual ~FrameIndex();
 
    uint32_t       NumFrames() const;

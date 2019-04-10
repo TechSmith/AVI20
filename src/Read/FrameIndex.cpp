@@ -148,13 +148,15 @@ private:
 class TypeOneIndex : public TemplatedIndex<TypeOneFrameInfo>
 {
 public:
+   TypeOneIndex( uint64_t moviPos ) : _MoviPos( moviPos ) {}
+
    void Read( IStream& stream, uint64_t endPos ) override
    {
       while ( stream.Pos() < endPos )
       {
          AVIINDEXENTRY entry;
          stream.Read( entry );
-         frames.push_back( make_shared<TypeOneFrameInfo>( entry, 2044 ) );
+         frames.push_back( make_shared<TypeOneFrameInfo>( entry, _MoviPos ) );
       }
 
       uint64_t totalMediaBytes = 0;
@@ -164,16 +166,18 @@ public:
          totalMediaBytes += frame->Size();
       }
    }
+protected:
+   const uint64_t _MoviPos;
 };
 
 
 
-FrameIndex::FrameIndex( IStream& stream, const ChunkHeader& indxChunk )
+FrameIndex::FrameIndex( IStream& stream, const ChunkHeader& indxChunk, uint64_t moviPos )
    : _Stream( stream )
    , _IndxChunk( indxChunk )
 {
    if ( indxChunk.fcc == FCC( 'idx1' ) )
-      _Index.reset( new TypeOneIndex );
+      _Index.reset( new TypeOneIndex( moviPos ) );
    else // 'indx' ChunkHeader
       _Index.reset( new TypeTwoIndex );
 

@@ -4,11 +4,12 @@
 
 NAMESPACE_AVI20_READ_BEGIN
 
-MediaStreamReaderImpl::MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& streamInfo )
+MediaStreamReaderImpl::MediaStreamReaderImpl( IStream& stream, const MediaStreamInfo& streamInfo, uint64_t moviPos )
    : _Stream( stream )
    , _StreamInfo( streamInfo )
+   , _MoviPos( moviPos )
 {
-   _FrameIndex = new FrameIndex( stream, streamInfo.indxChunk );
+   _FrameIndex = new FrameIndex( stream, streamInfo.indxChunk, moviPos );
 }
 
 MediaStreamReaderImpl::~MediaStreamReaderImpl()
