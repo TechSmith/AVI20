@@ -10,27 +10,99 @@
 #undef min
 #endif
 
-NAMESPACE_AVI20_READ_BEGIN
+using std::make_shared;
+using std::shared_ptr;
 
+NAMESPACE_AVI20_READ_BEGIN
 
 struct FrameInfo
 {
 public:
-   FrameInfo() {}
-   FrameInfo( const AVISTDINDEX_ENTRY& entry, uint64_t offset ) : pos( entry.Offset() + offset ), size( entry.RawSize() ) {}
+   virtual ~FrameInfo() {}
+
+   virtual uint64_t Offset() const = 0;
+   virtual DWORD Size() const = 0;
+   virtual bool IsKeyframe() const = 0;
+};
+
+struct TypeTwoFrameInfo : public FrameInfo
+{
 public:
-   uint64_t Offset() const     { return pos; }
-   DWORD    Size() const       { return size & AVISTDINDEX_SIZEMASK; }
-   bool     IsKeyframe() const { return ( size & AVISTDINDEX_DELTAFRAME ) == 0; }
+   TypeTwoFrameInfo() {}
+   TypeTwoFrameInfo( const AVISTDINDEX_ENTRY& entry, uint64_t offset ) : pos( entry.Offset() + offset ), size( entry.RawSize() ) {}
+public:
+   uint64_t Offset() const override     { return pos; }
+   DWORD    Size() const override       { return size & AVISTDINDEX_SIZEMASK; }
+   bool     IsKeyframe() const override { return ( size & AVISTDINDEX_DELTAFRAME ) == 0; }
 private:
    uint64_t pos;
    DWORD    size;
 };
 
-struct Type2Index
+struct TypeOneFrameInfo : public FrameInfo
 {
 public:
-   void Read( IStream& stream, uint64_t endPos )
+   TypeOneFrameInfo( const AVIINDEXENTRY& entry, uint64_t offset )
+      : flags( entry.dwFlags ), offset( entry.dwChunkOffset + offset ), chunkLength( entry.dwChunkLength )
+   {
+   }
+
+   uint64_t Offset() const override { return offset; }
+   DWORD Size() const override { return chunkLength; }
+   bool IsKeyframe() const override { return flags & AVIIF_KEYFRAME; }
+
+private:
+   DWORD    flags;
+   uint64_t offset;
+   DWORD    chunkLength;
+};
+
+template<class T>
+class TemplatedIndex : public Index
+{
+public:
+   shared_ptr<const FrameInfo> FrameAt( uint32_t index ) const override
+   {
+      return frames[index];
+   }
+   uint32_t NumFrames() const override
+   {
+      return frames.size();
+   }
+
+   uint64_t TotalMediaBytes() const override
+   {
+      if ( mediaByteOffsetForFrame.empty() )
+         return 0;
+
+      return mediaByteOffsetForFrame.back() + frames.back()->Size();
+   }
+
+   uint64_t MediaByteOffsetForFrame( uint32_t frameIndex ) const override
+   {
+      if ( frameIndex < 0 )
+         return 0;
+      if ( frameIndex >= mediaByteOffsetForFrame.size() )
+         return TotalMediaBytes();
+      return mediaByteOffsetForFrame[frameIndex];
+   }
+
+   int32_t FrameContainingMediaByteOffset( uint64_t mediaByteOffset ) const override
+   {
+      return std::upper_bound( mediaByteOffsetForFrame.begin(), mediaByteOffsetForFrame.end(), mediaByteOffset ) - mediaByteOffsetForFrame.begin() - 1;
+   }
+
+
+protected:
+   std::vector< shared_ptr<T> >  frames;
+   std::vector<uint64_t>         mediaByteOffsetForFrame;
+};
+
+
+class TypeTwoIndex : public TemplatedIndex<TypeTwoFrameInfo>
+{
+public:
+   void Read( IStream& stream, uint64_t endPos ) override
    {
       stream.Read( superIndex );
 
@@ -56,7 +128,7 @@ public:
          {
             AVISTDINDEX_ENTRY entry;
             stream.Read( entry );
-            frames.push_back( FrameInfo( entry, stdIndex.qwBaseOffset ) );
+            frames.push_back( make_shared<TypeTwoFrameInfo>( entry, stdIndex.qwBaseOffset ) );
          }
       }
 
@@ -64,37 +136,34 @@ public:
       for ( int i = 0; i < (int) frames.size(); i++ )
       {
          mediaByteOffsetForFrame.push_back( totalMediaBytes );
-         totalMediaBytes += frames[i].Size();
+         totalMediaBytes += frames[i]->Size();
       }
    }
 
-   uint64_t TotalMediaBytes() const
-   {
-      if ( mediaByteOffsetForFrame.empty() )
-         return 0;
+private:
+   AVISUPERINDEX                                superIndex;
+   std::vector<AVISUPERINDEXENTRY>              indexes;
+};
 
-      return mediaByteOffsetForFrame.back() + frames.back().Size();
-   }
-
-   uint64_t MediaByteOffsetForFrame( uint32_t frameIndex ) const
-   {
-      if ( frameIndex < 0 )
-         return 0;
-      if ( frameIndex >= mediaByteOffsetForFrame.size() )
-         return TotalMediaBytes();
-      return mediaByteOffsetForFrame[frameIndex];
-   }
-
-   int32_t FrameContainingMediaByteOffset( uint64_t mediaByteOffset ) const
-   {
-      return std::upper_bound( mediaByteOffsetForFrame.begin(), mediaByteOffsetForFrame.end(), mediaByteOffset ) - mediaByteOffsetForFrame.begin() - 1;
-   }
-
+class TypeOneIndex : public TemplatedIndex<TypeOneFrameInfo>
+{
 public:
-   AVISUPERINDEX                    superIndex;
-   std::vector<AVISUPERINDEXENTRY>  indexes;
-   std::vector<FrameInfo>           frames;
-   std::vector<uint64_t>            mediaByteOffsetForFrame;
+   void Read( IStream& stream, uint64_t endPos ) override
+   {
+      while ( stream.Pos() < endPos )
+      {
+         AVIINDEXENTRY entry;
+         stream.Read( entry );
+         frames.push_back( make_shared<TypeOneFrameInfo>( entry, 0 ) );
+      }
+
+      uint64_t totalMediaBytes = 0;
+      for ( auto frame : frames )
+      {
+         mediaByteOffsetForFrame.push_back( totalMediaBytes );
+         totalMediaBytes += frame->Size();
+      }
+   }
 };
 
 
@@ -103,39 +172,42 @@ FrameIndex::FrameIndex( IStream& stream, const ChunkHeader& indxChunk )
    : _Stream( stream )
    , _IndxChunk( indxChunk )
 {
-   _Type2Index = new Type2Index;
+   if ( indxChunk.fcc == FCC( 'idx1' ) )
+      _Index.reset( new TypeOneIndex );
+   else // 'indx' ChunkHeader
+      _Index.reset( new TypeTwoIndex );
+
    Parse();
 }
 
 FrameIndex::~FrameIndex()
 {
-   delete _Type2Index;
 }
 
 void FrameIndex::Parse()
 {
    _Stream.Rewind();
    _Stream.SetPos( _IndxChunk.StartDataPos() );
-   _Type2Index->Read( _Stream, _IndxChunk.EndPos() );
+   _Index->Read( _Stream, _IndxChunk.EndPos() );
 }
 
 uint32_t FrameIndex::NumFrames() const
 {
-   return _Type2Index->frames.size();
+   return _Index->NumFrames();
 }
 
 uint32_t FrameIndex::FrameSize( uint32_t frameIndex ) const
 {
    if ( frameIndex >= NumFrames() )
       return 0;
-   return _Type2Index->frames[frameIndex].Size();
+   return _Index->FrameAt( frameIndex )->Size();
 }
 
 uint64_t FrameIndex::FrameStreamPos( uint32_t frameIndex ) const
 {
    if ( frameIndex >= NumFrames() )
       return 0;
-   return _Type2Index->frames[frameIndex].Offset();
+   return _Index->FrameAt( frameIndex )->Offset();
 }
 
 bool FrameIndex::ReadFrameData( uint32_t frameIndex, uint8_t* dest ) const
@@ -184,7 +256,7 @@ bool FrameIndex::IsKeyframe( uint32_t frameIndex ) const
 {
    if ( frameIndex >= NumFrames() )
       return false;
-   return _Type2Index->frames[frameIndex].IsKeyframe();
+   return _Index->FrameAt( frameIndex )->IsKeyframe();
 }
 
 uint32_t FrameIndex::KeyframeAtOrBefore( uint32_t frameIndex ) const
@@ -197,21 +269,21 @@ uint32_t FrameIndex::KeyframeAtOrBefore( uint32_t frameIndex ) const
 
 uint64_t FrameIndex::TotalMediaBytes() const
 {
-   return _Type2Index ? _Type2Index->TotalMediaBytes() : 0;
+   return _Index ? _Index->TotalMediaBytes() : 0;
 }
 
 uint64_t FrameIndex::MediaByteOffsetForFrame( uint32_t frameIndex ) const
 {
-   if ( !_Type2Index )
+   if ( !_Index )
       return 0;
-   return _Type2Index->MediaByteOffsetForFrame( frameIndex );
+   return _Index->MediaByteOffsetForFrame( frameIndex );
 }
 
 int32_t FrameIndex::FrameContainingMediaByteOffset( uint64_t mediaByteOffset ) const
 {
-   if ( !_Type2Index )
+   if ( !_Index )
       return -1;
-   return _Type2Index->FrameContainingMediaByteOffset( mediaByteOffset );
+   return _Index->FrameContainingMediaByteOffset( mediaByteOffset );
 }
 
 uint32_t FrameIndex::ReadBytes( uint64_t mediaBytesOffset, uint32_t numBytesRequested, uint8_t* dest )
