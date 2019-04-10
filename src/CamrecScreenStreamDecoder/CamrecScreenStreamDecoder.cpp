@@ -167,7 +167,9 @@ namespace
 
       BITMAPINFOHEADER bmihCompressed = bmihForCompressed( msi );
       BITMAPINFOHEADER bmihDecompresed = bmihForDecompressed( msi );
-      adjustForTSCC( bmihCompressed, bmihDecompresed );
+
+      // We don't want this for older camrecs... also seems weird that it adjusts the COMPRESSED bit-count
+      //adjustForTSCC( bmihCompressed, bmihDecompresed );
 
       // We prefer 32-bit output but may need to settle for 24-bit
       LRESULT queryResult = ::ICSendMessage( hic, ICM_DECOMPRESS_QUERY, (DWORD_PTR)&bmihCompressed, (DWORD_PTR)&bmihDecompresed );
@@ -240,7 +242,8 @@ namespace
 int main()
 {
    std::string camrecWithTypeTwoAVI( "C:\\git\\CamtasiaWin3\\TSCTestMediaFiles\\1.4 part 4 remake.camrec" );
-   std::string camrecWithTypeOneAVI( "C:\\crap\\Tech Support\\Project\\OL RT 1 with math  & changes.pptx1-5.camrec" );
+   //std::string camrecWithTypeOneAVI( "C:\\crap\\Tech Support\\Project\\OL RT 1 with math  & changes.pptx1-5.camrec" );
+   std::string camrecWithTypeOneAVI( "C:\\Test Media\\camrec\\Customer Dictionary.camrec" );
 
    HRESULT hr = ::CoInitializeEx( nullptr, COINIT_APARTMENTTHREADED );
    if ( FAILED( hr ) )
@@ -254,8 +257,8 @@ int main()
                             &gdiplusStartupInput, &gdiplusStartupOutput );
    Gdiplus::Status stat = gdiplusStartupOutput.NotificationHook( &gdiplusBGThreadToken );
 
-   bool status = DecodeCamrecScreenStream( camrecWithTypeTwoAVI );
-   //bool status = DecodeCamrecScreenStream( camrecWithTypeOneAVI );
+   //bool status = DecodeCamrecScreenStream( camrecWithTypeTwoAVI );
+   bool status = DecodeCamrecScreenStream( camrecWithTypeOneAVI );
    assert( status == true );
 
    gdiplusStartupOutput.NotificationUnhook( gdiplusBGThreadToken );

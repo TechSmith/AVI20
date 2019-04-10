@@ -19,9 +19,27 @@ NAMESPACE_AVI20_READ_BEGIN
 class BasicInfoParser : public ParserBase
 {
 public:
-   BasicInfoParser( IStream& stream ) : ParserBase( stream ) {}
+   BasicInfoParser( IStream& stream )
+      : ParserBase( stream )
+      , _MoviPos( 0ULL )
+   {
 
-   bool SkipChunk( const ChunkHeader& ch ) { return ch.fcc == FCC('movi'); }
+   }
+
+   bool SkipChunk( const ChunkHeader& ch )
+   {
+      if ( ch.fcc == FCC( 'movi' ) )
+      {
+         _MoviPos = ch.StartDataPos();
+         return true;
+      }
+      return false;
+   }
+
+   uint64_t MoviPos() const { return _MoviPos;  }
+
+protected:
+   uint64_t _MoviPos;
 };
 
 class ReaderImpl

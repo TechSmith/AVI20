@@ -42,8 +42,8 @@ private:
 struct TypeOneFrameInfo : public FrameInfo
 {
 public:
-   TypeOneFrameInfo( const AVIINDEXENTRY& entry, uint64_t offset )
-      : flags( entry.dwFlags ), offset( entry.dwChunkOffset + offset ), chunkLength( entry.dwChunkLength )
+   TypeOneFrameInfo( const AVIINDEXENTRY& entry, uint64_t i_offset )
+      : flags( entry.dwFlags ), offset( entry.dwChunkOffset + i_offset + 8 ), chunkLength( entry.dwChunkLength )
    {
    }
 
@@ -154,7 +154,7 @@ public:
       {
          AVIINDEXENTRY entry;
          stream.Read( entry );
-         frames.push_back( make_shared<TypeOneFrameInfo>( entry, 0 ) );
+         frames.push_back( make_shared<TypeOneFrameInfo>( entry, 2044 ) );
       }
 
       uint64_t totalMediaBytes = 0;
