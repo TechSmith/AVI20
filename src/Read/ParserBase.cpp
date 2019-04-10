@@ -131,6 +131,7 @@ void ParserBase::GotChunk( const ChunkHeader& ch )
    if ( ch.fcc == FCC( 'idx1' ) && !_StreamInfo.empty() && _StreamInfo.back().indxChunk.size == 0 )
    {
       _StreamInfo.back().indxChunk = ch;
+      _StreamInfo.back().isTypeOneAVI = true;
    }
 
    //if ( ch.fcc == FCC('movi') )

@@ -169,7 +169,8 @@ namespace
       BITMAPINFOHEADER bmihDecompresed = bmihForDecompressed( msi );
 
       // We don't want this for older camrecs... also seems weird that it adjusts the COMPRESSED bit-count
-      //adjustForTSCC( bmihCompressed, bmihDecompresed );
+      if ( !msi.isTypeOneAVI )
+         adjustForTSCC( bmihCompressed, bmihDecompresed );
 
       // We prefer 32-bit output but may need to settle for 24-bit
       LRESULT queryResult = ::ICSendMessage( hic, ICM_DECOMPRESS_QUERY, (DWORD_PTR)&bmihCompressed, (DWORD_PTR)&bmihDecompresed );

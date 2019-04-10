@@ -43,7 +43,9 @@ struct TypeOneFrameInfo : public FrameInfo
 {
 public:
    TypeOneFrameInfo( const AVIINDEXENTRY& entry, uint64_t i_offset )
-      : flags( entry.dwFlags ), offset( entry.dwChunkOffset + i_offset + 8 ), chunkLength( entry.dwChunkLength )
+      : flags( entry.dwFlags )
+      , offset( entry.dwChunkOffset + i_offset + 8 ) // '+ 8' is to skip over the chunk header
+      , chunkLength( entry.dwChunkLength )
    {
    }
 
