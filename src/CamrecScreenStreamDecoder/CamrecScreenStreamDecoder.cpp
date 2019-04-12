@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <gtest/gtest.h>
+
 #include <StringUtil/StringUtil.h>
 
 #include <AVI20/Read/MediaStreamInfo.h>
@@ -19,60 +21,6 @@ using namespace AVI20::Read;
 using std::shared_ptr;
 using std::unique_ptr;
 
-namespace
-{
-   using namespace Gdiplus;
-
-   int GetEncoderClsid( const WCHAR* format, CLSID* pClsid )
-   {
-      UINT  num = 0;          // number of image encoders
-      UINT  size = 0;         // size of the image encoder array in bytes
-   
-      ImageCodecInfo* pImageCodecInfo = NULL;
-   
-      GetImageEncodersSize( &num, &size );
-      if ( size == 0 )
-         return -1;  // Failure
-   
-      pImageCodecInfo = (ImageCodecInfo*)( malloc( size ) );
-      if ( pImageCodecInfo == NULL )
-         return -1;  // Failure
-   
-      GetImageEncoders( num, size, pImageCodecInfo );
-   
-      for ( UINT j = 0; j < num; ++j )
-      {
-         if ( wcscmp( pImageCodecInfo[j].MimeType, format ) == 0 )
-         {
-            *pClsid = pImageCodecInfo[j].Clsid;
-            free( pImageCodecInfo );
-            return j;  // Success
-         }
-      }
-   
-      free( pImageCodecInfo );
-      return -1;  // Failure
-   }
-
-   BOOL QuickSavePic( Bitmap* pBitmap, const CString& strFilename )
-   {
-      CString strExt = strFilename.Mid( strFilename.ReverseFind( '.' ) + 1 );
-      strExt.MakeUpper();
-   
-      CString strFormat;
-      if ( strExt == "JPG"  )    strFormat = "image/jpeg";
-      if ( strExt == "JPEG"  )   strFormat = "image/jpeg";
-      if ( strExt == "GIF"  )    strFormat = "image/gif";
-      if ( strExt == "PNG"  )    strFormat = "image/png";
-      if ( strExt == "BMP"  )    strFormat = "image/bmp";
-      CLSID clsid;
-      if ( GetEncoderClsid( CStringW( strFormat ), &clsid ) == -1 )
-         return FALSE;
-      if ( pBitmap->Save( CStringW( strFilename ), &clsid ) != Ok )
-         return FALSE;
-      return TRUE;
-   }
-}
 
 namespace
 {
@@ -208,20 +156,6 @@ namespace
          if ( decompressStatus != ICERR_OK )
             break;
 
-         if ( i == 0 )
-         {
-            int stride = bmihDecompresed.biWidth * bmihDecompresed.biBitCount / 8;
-            PixelFormat pf = ( bmihDecompresed.biBitCount == 24 ) ? PixelFormat24bppRGB : PixelFormat32bppRGB;
-            BYTE *pLastRow = pUncompressed.get() + stride * (bmihDecompresed.biHeight - 1);
-            Gdiplus::Bitmap bm( bmihDecompresed.biWidth, bmihDecompresed.biHeight, -stride, pf, pLastRow );
-
-            CAtlString outputPath;
-            TCHAR buf[MAX_PATH];
-            ::GetTempPath( MAX_PATH, buf );
-            outputPath.Format( L"%s\\frame_%04u.png", buf, i );
-            QuickSavePic( &bm, outputPath );
-         }
- 
          ++numDecoded;
       }
 
@@ -239,32 +173,46 @@ namespace
    }
 }
 
-
-int main()
+class CamrecScreenStreamDecodingTest : public ::testing::Test
 {
-   std::string camrecWithTypeTwoAVI( "C:\\git\\CamtasiaWin3\\TSCTestMediaFiles\\1.4 part 4 remake.camrec" );
-   //std::string camrecWithTypeOneAVI( "C:\\crap\\Tech Support\\Project\\OL RT 1 with math  & changes.pptx1-5.camrec" );
-   std::string camrecWithTypeOneAVI( "C:\\Test Media\\camrec\\Customer Dictionary.camrec" );
+public:
+   void SetUp() override
+   {
+      testMediaFolder = std::string( ABSOLUTE_PATH_TO_TEST_MEDIA_DIR );
+   }
 
+   void TearDown() override
+   {
+
+   }
+
+   std::string testMediaFolder;
+};
+
+TEST_F( CamrecScreenStreamDecodingTest, TestCamrecWithTypeOneAVI )
+{
+   std::string path( testMediaFolder + "\\Customer Dictionary.camrec" );
+
+   EXPECT_TRUE( DecodeCamrecScreenStream( path ) );
+}
+
+TEST_F( CamrecScreenStreamDecodingTest, TestCamrecWithTypeTwoAVI )
+{
+   std::string path( testMediaFolder + "\\1.4 part 4 remake.camrec" );
+
+   EXPECT_TRUE( DecodeCamrecScreenStream( path ) );
+}
+
+int main( int argc, char* argv[] )
+{
    HRESULT hr = ::CoInitializeEx( nullptr, COINIT_APARTMENTTHREADED );
    if ( FAILED( hr ) )
       return -1;
+   ::testing::InitGoogleTest( &argc, argv );
 
-   Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-   Gdiplus::GdiplusStartupOutput gdiplusStartupOutput;
-   ULONG_PTR gdiplusToken, gdiplusBGThreadToken;
-   gdiplusStartupInput.SuppressBackgroundThread = TRUE;
-   Gdiplus::GdiplusStartup( &gdiplusToken,
-                            &gdiplusStartupInput, &gdiplusStartupOutput );
-   Gdiplus::Status stat = gdiplusStartupOutput.NotificationHook( &gdiplusBGThreadToken );
-
-   //bool status = DecodeCamrecScreenStream( camrecWithTypeTwoAVI );
-   bool status = DecodeCamrecScreenStream( camrecWithTypeOneAVI );
-   assert( status == true );
-
-   gdiplusStartupOutput.NotificationUnhook( gdiplusBGThreadToken );
-   Gdiplus::GdiplusShutdown( gdiplusToken );
+   int result = RUN_ALL_TESTS();
 
    ::CoUninitialize();
-    return 0;
+
+   return result;
 }
