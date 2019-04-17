@@ -4,19 +4,37 @@
 #include <AVI20/AVI20Defs.h>
 #include <AVI20/Read/ChunkHeader.h>
 
+#include <memory>
+
 NAMESPACE_AVI20_BEGIN
 class Buffer;
 NAMESPACE_AVI20_END
 
 NAMESPACE_AVI20_READ_BEGIN
 
+class FrameInfo;
 class IStream;
-struct Type2Index;
+
+class Index
+{
+public:
+   virtual ~Index() {}
+
+   virtual std::shared_ptr<const FrameInfo> FrameAt( uint32_t index ) const = 0;
+   virtual uint32_t NumFrames() const = 0;
+
+   virtual void Read( IStream& stream, uint64_t endPos ) = 0;
+
+   virtual uint64_t TotalMediaBytes() const = 0;
+   virtual uint64_t MediaByteOffsetForFrame( uint32_t frameIndex ) const = 0;
+   virtual int32_t FrameContainingMediaByteOffset( uint64_t mediaByteOffset ) const = 0;
+};
+
 
 class FrameIndex
 {
 public:
-   FrameIndex( IStream& stream, const ChunkHeader& indxChunk );
+   FrameIndex( IStream& stream, const ChunkHeader& indxChunk, uint64_t moviPos );
    virtual ~FrameIndex();
 
    uint32_t       NumFrames() const;
@@ -41,9 +59,9 @@ private:
    void Parse();
 
 private:
-   IStream&    _Stream;
-   ChunkHeader _IndxChunk;
-   Type2Index* _Type2Index;
+   IStream&                _Stream;
+   ChunkHeader             _IndxChunk;
+   std::unique_ptr<Index>  _Index;
 };
 
 NAMESPACE_AVI20_READ_END

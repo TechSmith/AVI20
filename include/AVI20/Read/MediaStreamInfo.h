@@ -19,6 +19,7 @@ struct MediaStreamInfo
    BITMAPINFOHEADER  video;
    WaveFormatEx      audio;
    ChunkHeader       indxChunk;
+   bool              isTypeOneAVI;
 };
 
 NAMESPACE_AVI20_READ_END

@@ -127,6 +127,13 @@ void ParserBase::GotChunk( const ChunkHeader& ch )
       //_StreamInfo.back().type2index.Read( _Stream, ch.EndPos() );
    }
 
+   // Type 2 AVIs may have an 'idx1' chunk but we don't want those... hence the check on indxChunk.size
+   if ( ch.fcc == FCC( 'idx1' ) && !_StreamInfo.empty() && _StreamInfo.back().indxChunk.size == 0 )
+   {
+      _StreamInfo.back().indxChunk = ch;
+      _StreamInfo.back().isTypeOneAVI = true;
+   }
+
    //if ( ch.fcc == FCC('movi') )
    //{
    //   _moviPos = ch.startPos+8;
