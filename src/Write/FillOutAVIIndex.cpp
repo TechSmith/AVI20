@@ -106,7 +106,7 @@ void FillOutAVIIndex( Write::Stream& stream, const Read::FillAVIIndexInfo& info 
       superindex.wLongsPerEntry = 4;
       superindex.bIndexSubType = 0;                         // frame index
       superindex.bIndexType = 0;                            // AVI_INDEX_OF_INDEXES;
-      superindex.nEntriesInUse = streamInfo.indexes.size(); // offset of next unused entry in aIndex
+      superindex.nEntriesInUse = (DWORD) streamInfo.indexes.size(); // offset of next unused entry in aIndex
       superindex.dwChunkId = streamInfo.frameFCC( true/*keyframe*/ );
       stream.Write( superindex );
 
@@ -117,8 +117,8 @@ void FillOutAVIIndex( Write::Stream& stream, const Read::FillAVIIndexInfo& info 
          AVISUPERINDEXENTRY superIndexEntry;
          superIndexEntry.qwOffset   = streamInfo.indexes[i].indexChunk.startPos;
          superIndexEntry.dwSize     = streamInfo.indexes[i].indexChunk.size + 8;
-         superIndexEntry.dwDuration = isAudio ? streamInfo.indexes[i].SizeOfEntries() / streamInfo.streamInfo.audio.BlockAlign()
-                                              : streamInfo.indexes[i].entries.size();
+         superIndexEntry.dwDuration = DWORD( isAudio ? streamInfo.indexes[i].SizeOfEntries() / streamInfo.streamInfo.audio.BlockAlign()
+                                                     : streamInfo.indexes[i].entries.size() );
          stream.Write( superIndexEntry );
       }
       bool error = (int)streamInfo.indexes.size() >= slotsAvailable;

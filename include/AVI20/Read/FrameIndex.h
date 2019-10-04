@@ -12,7 +12,7 @@ NAMESPACE_AVI20_END
 
 NAMESPACE_AVI20_READ_BEGIN
 
-class FrameInfo;
+struct FrameInfo;
 class IStream;
 
 class Index

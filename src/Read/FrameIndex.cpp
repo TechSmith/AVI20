@@ -69,7 +69,7 @@ public:
    }
    uint32_t NumFrames() const override
    {
-      return frames.size();
+      return (uint32_t) frames.size();
    }
 
    uint64_t TotalMediaBytes() const override
@@ -91,7 +91,7 @@ public:
 
    int32_t FrameContainingMediaByteOffset( uint64_t mediaByteOffset ) const override
    {
-      return std::upper_bound( mediaByteOffsetForFrame.begin(), mediaByteOffsetForFrame.end(), mediaByteOffset ) - mediaByteOffsetForFrame.begin() - 1;
+      return int32_t( std::upper_bound( mediaByteOffsetForFrame.begin(), mediaByteOffsetForFrame.end(), mediaByteOffset ) - mediaByteOffsetForFrame.begin() - 1 );
    }
 
 
