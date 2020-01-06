@@ -14,7 +14,6 @@ nuget
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
-      licenseUrl: "http://www.techsmith.com";
       projectUrl: "https://github.com/TechSmith/AVI20";
       iconUrl: "http://www.techsmith.com/favicon.ico";
       requireLicenseAcceptance: false;
