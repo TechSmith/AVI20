@@ -10,7 +10,7 @@ nuget
    nuspec
    {
       id = avi20;
-      version: 2.0.0;
+      version: 2.0.1;
       title: AVI20 Library;
       authors: { TechSmith Corporation };
       owners: { TechSmith Corporation };
@@ -20,6 +20,7 @@ nuget
       summary: AVI20 Library;
       description: @"Library for reading and writing AVI 2.0 files (which supports files larger than 4GB)";
 	  releaseNotes: "
+        2.0.1     SourceLink symbols fixed
         2.0.0     Visual Studio 2019
         1.6.0     Turn off Whole Program Optimization for Release builds
 	     1.5.1.0   Fix AVI 1.0 stream reading when there are multiple streams
