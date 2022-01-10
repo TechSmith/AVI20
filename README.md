@@ -1,3 +1,6 @@
+# Moved to CommonCpp
+This repository has been archived because it has been moved to [CommonCpp](https://github.com/TechSmith/CommonCpp)
+
 # AVI20
 Library for reading and writing AVI 2.0 files (which supports files larger than 4GB)
 
